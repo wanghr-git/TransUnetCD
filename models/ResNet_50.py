@@ -1,4 +1,4 @@
-# ResNet50.py
+# TransUnetCD Improved ResNet50.py
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -35,10 +35,9 @@ class Bottleneck(nn.Module):
 class ResNet50(nn.Module):
     def __init__(self):
         super(ResNet50, self).__init__()
-        self.stem = nn.Sequential(*[
-            Conv(3, 64, kernel_size=7, stride=2),
-            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        ])
+
+        self.stem = Conv(3, 64, kernel_size=7, stride=2)
+        self.MaxPool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.layer1 = self._make_stage(64, 256, down_sample=False, num_blocks=3)
         self.layer2 = self._make_stage(256, 512, down_sample=True, num_blocks=4)
@@ -53,10 +52,11 @@ class ResNet50(nn.Module):
 
     def forward(self, x):
         x1 = self.stem(x)
-        x2 = self.layer1(x1)
+        x2 = self.MaxPool(x1)
+        x2 = self.layer1(x2)
         x3 = self.layer2(x2)
         x4 = self.layer3(x3)
-        return x1, x2, x3, x4
+        return (x1, x2, x3, x4)
 
 if __name__ == "__main__":
     inputs = torch.rand((8, 3, 512, 512))
