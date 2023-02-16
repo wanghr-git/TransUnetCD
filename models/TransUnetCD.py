@@ -60,5 +60,5 @@ if __name__ == "__main__":
     input_1 = torch.rand((8, 3, 512, 512))
     input_2 = torch.rand((8, 3, 512, 512))
     net = TransUnetCD(512, 3, 2048, 16)
-    test = net(input_1, input_1)
+    test = net(input_1, input_2)
     print('11')
